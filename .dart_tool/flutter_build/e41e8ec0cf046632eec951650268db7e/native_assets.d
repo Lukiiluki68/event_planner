@@ -1,0 +1,1 @@
+ C:\\Users\\lukis\\AndroidStudioProjects\\Event_Planner\\.dart_tool\\flutter_build\\e41e8ec0cf046632eec951650268db7e\\native_assets.yaml: 

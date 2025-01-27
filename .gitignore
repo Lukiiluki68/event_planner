@@ -1,0 +1,16 @@
+# Build
+build/
+.flutter-plugins
+.flutter-plugins-dependencies
+
+# IntelliJ
+*.iml
+*.ipr
+*.iws
+.idea/
+
+# VS Code
+.vscode/
+
+# Others
+*.lock
