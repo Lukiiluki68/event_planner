@@ -45,6 +45,7 @@ class _AddEventScreenState extends State<AddEventScreen> {
         eventDateTime.toIso8601String(),
         widget.currentUser,
       );
+
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Wydarzenie zostało dodane.')),
       );
@@ -90,7 +91,6 @@ class _AddEventScreenState extends State<AddEventScreen> {
       appBar: AppBar(
         title: const Text('Dodaj Wydarzenie'),
       ),
-      // Zapewniamy przewijanie zawartości i estetyczne tło
       body: SingleChildScrollView(
         child: Container(
           decoration: BoxDecoration(
@@ -103,23 +103,21 @@ class _AddEventScreenState extends State<AddEventScreen> {
               end: Alignment.bottomCenter,
             ),
           ),
-          height: MediaQuery.of(context).size.height, // Tło na pełną wysokość
+          height: MediaQuery.of(context).size.height,
           width: double.infinity,
           child: Center(
-            // Karta z formularzem
             child: Card(
               margin: const EdgeInsets.symmetric(horizontal: 24, vertical: 48),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(16),
               ),
-              elevation: 8, // cień karty
+              elevation: 8,
               child: Padding(
                 padding: const EdgeInsets.all(24.0),
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    // Nagłówek karty
                     Text(
                       'Utwórz nowe wydarzenie',
                       style: Theme.of(context).textTheme.headlineMedium?.copyWith(
@@ -129,7 +127,6 @@ class _AddEventScreenState extends State<AddEventScreen> {
                       textAlign: TextAlign.center,
                     ),
                     const SizedBox(height: 16),
-                    // Pole: Tytuł
                     TextField(
                       controller: _titleController,
                       decoration: InputDecoration(
@@ -141,7 +138,6 @@ class _AddEventScreenState extends State<AddEventScreen> {
                       ),
                     ),
                     const SizedBox(height: 16),
-                    // Pole: Opis
                     TextField(
                       controller: _descriptionController,
                       decoration: InputDecoration(
@@ -153,7 +149,6 @@ class _AddEventScreenState extends State<AddEventScreen> {
                       ),
                     ),
                     const SizedBox(height: 16),
-                    // Pole: Lokalizacja
                     TextField(
                       controller: _locationController,
                       decoration: InputDecoration(
@@ -165,29 +160,23 @@ class _AddEventScreenState extends State<AddEventScreen> {
                       ),
                     ),
                     const SizedBox(height: 16),
-                    // Wybór daty
                     Row(
                       children: [
                         Expanded(
                           child: Text(
                             _selectedDate == null
                                 ? 'Wybierz datę'
-                                : 'Data: ${_selectedDate!.toLocal()}'.split(' ')[0],
+                                : 'Data: ${_selectedDate!.toLocal()}'
+                                .split(' ')[0],
                           ),
                         ),
                         ElevatedButton(
                           onPressed: _pickDate,
-                          style: ElevatedButton.styleFrom(
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                          ),
                           child: const Text('Wybierz datę'),
                         ),
                       ],
                     ),
                     const SizedBox(height: 16),
-                    // Wybór czasu
                     Row(
                       children: [
                         Expanded(
@@ -199,17 +188,11 @@ class _AddEventScreenState extends State<AddEventScreen> {
                         ),
                         ElevatedButton(
                           onPressed: _pickTime,
-                          style: ElevatedButton.styleFrom(
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                          ),
                           child: const Text('Wybierz czas'),
                         ),
                       ],
                     ),
                     const SizedBox(height: 32),
-                    // Przycisk dodawania wydarzenia
                     ElevatedButton(
                       onPressed: _addEvent,
                       style: ElevatedButton.styleFrom(

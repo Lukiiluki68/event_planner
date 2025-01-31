@@ -2,11 +2,14 @@ import 'package:flutter/material.dart';
 import '../services/event_service.dart';
 
 class EditEventScreen extends StatefulWidget {
-  final int index;
-  final Map<String, dynamic> event;
+  final String docId;                // Zamiast int index
+  final Map<String, dynamic> event;  // Dane wydarzenia
 
-  EditEventScreen({Key? key, required this.index, required this.event})
-      : super(key: key);
+  EditEventScreen({
+    Key? key,
+    required this.docId,
+    required this.event,
+  }) : super(key: key);
 
   @override
   _EditEventScreenState createState() => _EditEventScreenState();
@@ -51,12 +54,12 @@ class _EditEventScreenState extends State<EditEventScreen> {
 
     try {
       await EventService.updateEvent(
-        widget.index,
+        widget.docId, // kluczowa zmiana – docId zamiast index
         _titleController.text.trim(),
         _descriptionController.text.trim(),
         _locationController.text.trim(),
         updatedDateTime.toIso8601String(),
-        widget.event['createdBy'], // Użycie twórcy z oryginalnego wydarzenia
+        widget.event['createdBy'],
       );
 
       ScaffoldMessenger.of(context).showSnackBar(
@@ -104,7 +107,6 @@ class _EditEventScreenState extends State<EditEventScreen> {
       appBar: AppBar(
         title: const Text('Edytuj Wydarzenie'),
       ),
-      // Przewijanie zawartości i gradient w tle
       body: SingleChildScrollView(
         child: Container(
           decoration: BoxDecoration(
@@ -125,14 +127,13 @@ class _EditEventScreenState extends State<EditEventScreen> {
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(16),
               ),
-              elevation: 8, // cień karty
+              elevation: 8,
               child: Padding(
                 padding: const EdgeInsets.all(24.0),
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    // Nagłówek
                     Text(
                       'Edytuj Wydarzenie',
                       style: Theme.of(context).textTheme.headlineMedium?.copyWith(
@@ -142,7 +143,6 @@ class _EditEventScreenState extends State<EditEventScreen> {
                       textAlign: TextAlign.center,
                     ),
                     const SizedBox(height: 16),
-                    // Pole: Tytuł
                     TextField(
                       controller: _titleController,
                       decoration: InputDecoration(
@@ -154,7 +154,6 @@ class _EditEventScreenState extends State<EditEventScreen> {
                       ),
                     ),
                     const SizedBox(height: 16),
-                    // Pole: Opis
                     TextField(
                       controller: _descriptionController,
                       decoration: InputDecoration(
@@ -166,7 +165,6 @@ class _EditEventScreenState extends State<EditEventScreen> {
                       ),
                     ),
                     const SizedBox(height: 16),
-                    // Pole: Lokalizacja
                     TextField(
                       controller: _locationController,
                       decoration: InputDecoration(
@@ -178,7 +176,6 @@ class _EditEventScreenState extends State<EditEventScreen> {
                       ),
                     ),
                     const SizedBox(height: 16),
-                    // Data
                     Row(
                       children: [
                         Expanded(
@@ -198,7 +195,6 @@ class _EditEventScreenState extends State<EditEventScreen> {
                       ],
                     ),
                     const SizedBox(height: 16),
-                    // Czas
                     Row(
                       children: [
                         Expanded(
@@ -218,7 +214,6 @@ class _EditEventScreenState extends State<EditEventScreen> {
                       ],
                     ),
                     const SizedBox(height: 32),
-                    // Przycisk aktualizacji
                     ElevatedButton(
                       onPressed: _updateEvent,
                       style: ElevatedButton.styleFrom(

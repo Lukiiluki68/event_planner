@@ -21,15 +21,15 @@ class _ViewEventsScreenState extends State<ViewEventsScreen> {
   }
 
   void _loadEvents() {
-    EventService.debugPrintEvents(); // Debugowanie danych
+    EventService.debugPrintEvents(); // Debugowanie danych w konsoli
     setState(() {
       _eventsFuture = EventService.getEvents();
     });
   }
 
-  void _acceptEvent(int index) async {
+  void _acceptEvent(String docId) async {
     try {
-      await EventService.acceptEvent(index, widget.currentUser);
+      await EventService.acceptEvent(docId, widget.currentUser);
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Zapisano Twój udział w wydarzeniu!')),
       );
@@ -41,9 +41,9 @@ class _ViewEventsScreenState extends State<ViewEventsScreen> {
     }
   }
 
-  void _deleteEvent(int index) async {
+  void _deleteEvent(String docId) async {
     try {
-      await EventService.deleteEvent(index);
+      await EventService.deleteEvent(docId);
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Wydarzenie zostało usunięte!')),
       );
@@ -61,7 +61,6 @@ class _ViewEventsScreenState extends State<ViewEventsScreen> {
       appBar: AppBar(
         title: const Text('Przeglądaj Wydarzenia'),
       ),
-      // Gradient w tle
       body: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
@@ -77,27 +76,25 @@ class _ViewEventsScreenState extends State<ViewEventsScreen> {
           future: _eventsFuture,
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
-              // W trakcie pobierania wydarzeń
               return const Center(child: CircularProgressIndicator());
             } else if (snapshot.hasError) {
-              // Obsługa błędów
               return const Center(
                 child: Text('Błąd podczas ładowania wydarzeń.'),
               );
             } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-              // Brak wydarzeń
               return const Center(
                 child: Text('Brak wydarzeń do wyświetlenia.'),
               );
             } else {
               final events = snapshot.data!;
-              // Lista wydarzeń
               return ListView.builder(
                 itemCount: events.length,
                 itemBuilder: (context, index) {
                   final event = events[index];
+                  final docId = event['docId']; // klucz Firestore
+                  final participants = List<String>.from(event['participants']);
+
                   return Card(
-                    // Możesz dostosować odstępy i wygląd karty
                     margin: const EdgeInsets.symmetric(
                       vertical: 8,
                       horizontal: 16,
@@ -109,9 +106,7 @@ class _ViewEventsScreenState extends State<ViewEventsScreen> {
                     child: ListTile(
                       title: Text(
                         event['title'],
-                        style: const TextStyle(
-                          fontWeight: FontWeight.bold,
-                        ),
+                        style: const TextStyle(fontWeight: FontWeight.bold),
                       ),
                       subtitle: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -121,16 +116,14 @@ class _ViewEventsScreenState extends State<ViewEventsScreen> {
                           Text('Lokalizacja: ${event['location']}'),
                           Text('Data i czas: ${event['dateTime']}'),
                           Text('Twórca: ${event['createdBy']}'),
-                          Text(
-                            'Uczestnicy: ${event['participants'].join(', ')}',
-                          ),
+                          Text('Uczestnicy: ${participants.join(', ')}'),
                         ],
                       ),
                       trailing: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          // Edycja
-                          if (event['createdBy'] == widget.currentUser)
+                          // Edycja i usuwanie tylko dla twórcy
+                          if (event['createdBy'] == widget.currentUser) ...[
                             IconButton(
                               icon: const Icon(Icons.edit),
                               onPressed: () {
@@ -138,24 +131,23 @@ class _ViewEventsScreenState extends State<ViewEventsScreen> {
                                   context,
                                   MaterialPageRoute(
                                     builder: (context) => EditEventScreen(
-                                      index: index,
+                                      docId: docId,
                                       event: event,
                                     ),
                                   ),
                                 ).then((_) => _loadEvents());
                               },
                             ),
-                          // Usuwanie
-                          if (event['createdBy'] == widget.currentUser)
                             IconButton(
                               icon: const Icon(Icons.delete),
-                              onPressed: () => _deleteEvent(index),
+                              onPressed: () => _deleteEvent(docId),
                             ),
-                          // Uczestniczenie (jeśli nie jesteś twórcą, a nie uczestniczysz)
+                          ],
+                          // Weź udział (jeśli nie jesteś twórcą i jeszcze nie uczestniczysz)
                           if (event['createdBy'] != widget.currentUser &&
-                              !event['participants'].contains(widget.currentUser))
+                              !participants.contains(widget.currentUser))
                             TextButton(
-                              onPressed: () => _acceptEvent(index),
+                              onPressed: () => _acceptEvent(docId),
                               child: const Text('Weź udział'),
                             ),
                         ],

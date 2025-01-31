@@ -1,31 +1,23 @@
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class EventService {
-  static const String _eventsKey = 'events';
+  // Referencja do kolekcji 'events'
+  static final CollectionReference _eventsCollection =
+  FirebaseFirestore.instance.collection('events');
 
-  /// Pobranie listy wydarzeń
+  /// Pobranie listy wydarzeń z Firestore
   static Future<List<Map<String, dynamic>>> getEvents() async {
-    final prefs = await SharedPreferences.getInstance();
-    List<String> events = prefs.getStringList(_eventsKey) ?? [];
-
-    return events.map((event) {
-      final parts = event.split('|');
-
-      // Obsługa uczestników (lista jest serializowana jako przecinek-rozdzielona lista)
-      final participants = parts.length > 5 ? parts[5].split(',') : [];
-
-      return {
-        'title': parts.length > 0 ? parts[0] : 'Brak tytułu',
-        'description': parts.length > 1 ? parts[1] : 'Brak opisu',
-        'location': parts.length > 2 ? parts[2] : 'Brak lokalizacji',
-        'dateTime': parts.length > 3 ? parts[3] : DateTime.now().toIso8601String(),
-        'createdBy': parts.length > 4 ? parts[4] : 'Nieznany twórca',
-        'participants': participants,
-      };
+    final querySnapshot = await _eventsCollection.get();
+    // Konwersja dokumentów na listę map
+    return querySnapshot.docs.map((doc) {
+      final data = doc.data() as Map<String, dynamic>;
+      // Dodajemy docId do mapy, żeby łatwo móc aktualizować/usunąć wydarzenie
+      data['docId'] = doc.id;
+      return data;
     }).toList();
   }
 
-  /// Dodanie nowego wydarzenia
+  /// Dodanie nowego wydarzenia do Firestore
   static Future<void> addEvent(
       String title,
       String description,
@@ -33,70 +25,68 @@ class EventService {
       String dateTime,
       String createdBy,
       ) async {
-    final prefs = await SharedPreferences.getInstance();
-    List<String> events = prefs.getStringList(_eventsKey) ?? [];
-
-    // Pole participants jest puste na początku
-    String newEvent = '$title|$description|$location|$dateTime|$createdBy|';
-    events.add(newEvent);
-
-    await prefs.setStringList(_eventsKey, events);
+    await _eventsCollection.add({
+      'title': title,
+      'description': description,
+      'location': location,
+      'dateTime': dateTime,
+      'createdBy': createdBy,
+      'participants': <String>[], // na start pusta tablica
+    });
   }
 
   /// Aktualizacja istniejącego wydarzenia
+  /// Teraz przyjmujemy docId, zamiast 'int index'
   static Future<void> updateEvent(
-      int index,
+      String docId,
       String title,
       String description,
       String location,
       String dateTime,
       String createdBy,
       ) async {
-    final prefs = await SharedPreferences.getInstance();
-    List<String> events = prefs.getStringList(_eventsKey) ?? [];
-
-    String updatedEvent = '$title|$description|$location|$dateTime|$createdBy|';
-    events[index] = updatedEvent;
-
-    await prefs.setStringList(_eventsKey, events);
+    await _eventsCollection.doc(docId).update({
+      'title': title,
+      'description': description,
+      'location': location,
+      'dateTime': dateTime,
+      'createdBy': createdBy,
+      // participants nie nadpisujemy, by zachować aktualną listę
+    });
   }
 
   /// Oznaczenie udziału użytkownika w wydarzeniu
-  static Future<void> acceptEvent(int index, String username) async {
-    final prefs = await SharedPreferences.getInstance();
-    List<String> events = prefs.getStringList(_eventsKey) ?? [];
+  static Future<void> acceptEvent(String docId, String username) async {
+    final docRef = _eventsCollection.doc(docId);
 
-    final parts = events[index].split('|');
-    List<String> participants = parts.length > 5 ? parts[5].split(',') : [];
+    await FirebaseFirestore.instance.runTransaction((transaction) async {
+      final snapshot = await transaction.get(docRef);
+      if (!snapshot.exists) {
+        throw Exception("Event does not exist!");
+      }
 
-    if (!participants.contains(username)) {
-      participants.add(username);
-    }
+      final data = snapshot.data() as Map<String, dynamic>;
+      final participants = List<String>.from(data['participants'] ?? []);
 
-    // Aktualizacja wydarzenia
-    parts[5] = participants.join(',');
-    events[index] = parts.join('|');
+      if (!participants.contains(username)) {
+        participants.add(username);
+      }
 
-    await prefs.setStringList(_eventsKey, events);
+      // Zapisanie zaktualizowanej listy participants
+      transaction.update(docRef, {'participants': participants});
+    });
   }
 
-  /// Debugowanie danych zapisanych w SharedPreferences
+  /// Debugowanie danych - wypisuje w konsoli
   static Future<void> debugPrintEvents() async {
-    final prefs = await SharedPreferences.getInstance();
-    List<String> events = prefs.getStringList(_eventsKey) ?? [];
-    print('Zawartość wydarzeń w SharedPreferences:');
-    for (var event in events) {
-      print(event);
+    final querySnapshot = await _eventsCollection.get();
+    for (var doc in querySnapshot.docs) {
+      print('${doc.id} => ${doc.data()}');
     }
   }
 
   /// Usunięcie wydarzenia
-  static Future<void> deleteEvent(int index) async {
-    final prefs = await SharedPreferences.getInstance();
-    List<String> events = prefs.getStringList(_eventsKey) ?? [];
-
-    events.removeAt(index);
-
-    await prefs.setStringList(_eventsKey, events);
+  static Future<void> deleteEvent(String docId) async {
+    await _eventsCollection.doc(docId).delete();
   }
 }

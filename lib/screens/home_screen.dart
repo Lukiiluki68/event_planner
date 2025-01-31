@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'add_event_screen.dart';
 import 'view_events_screen.dart';
 import 'login_screen.dart';
+import 'package:event_planner/services/auth_service.dart';
+
 
 class HomeScreen extends StatelessWidget {
   final String currentUser;
@@ -16,11 +18,13 @@ class HomeScreen extends StatelessWidget {
         actions: [
           IconButton(
             icon: const Icon(Icons.logout),
-            onPressed: () {
-              // Przekierowanie na ekran logowania
+            onPressed: () async {
+              // Wylogowanie z Firebase
+              await AuthService.signOut();
+              // Przekierowanie do ekranu logowania
               Navigator.pushAndRemoveUntil(
                 context,
-                MaterialPageRoute(builder: (context) => LoginScreen()),
+                MaterialPageRoute(builder: (context) => const LoginScreen()),
                     (route) => false,
               );
             },
