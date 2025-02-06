@@ -128,6 +128,12 @@
       "languageVersion": "3.5"
     },
     {
+      "name": "flutter_signin_button",
+      "rootUri": "file:///C:/Users/lukis/AppData/Local/Pub/Cache/hosted/pub.dev/flutter_signin_button-2.0.0",
+      "packageUri": "lib/",
+      "languageVersion": "2.12"
+    },
+    {
       "name": "flutter_test",
       "rootUri": "file:///C:/Users/lukis/dev/flutter/packages/flutter_test",
       "packageUri": "lib/",
@@ -138,6 +144,12 @@
       "rootUri": "file:///C:/Users/lukis/dev/flutter/packages/flutter_web_plugins",
       "packageUri": "lib/",
       "languageVersion": "3.2"
+    },
+    {
+      "name": "font_awesome_flutter",
+      "rootUri": "file:///C:/Users/lukis/AppData/Local/Pub/Cache/hosted/pub.dev/font_awesome_flutter-9.2.0",
+      "packageUri": "lib/",
+      "languageVersion": "2.12"
     },
     {
       "name": "google_identity_services_web",
@@ -440,7 +452,7 @@
       "languageVersion": "3.6"
     }
   ],
-  "generated": "2025-01-31T17:10:48.614249Z",
+  "generated": "2025-02-06T11:41:43.460868Z",
   "generator": "pub",
   "generatorVersion": "3.6.1",
   "flutterRoot": "file:///C:/Users/lukis/dev/flutter",

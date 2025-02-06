@@ -20,15 +20,13 @@ class MyApp extends StatelessWidget {
       brightness: Brightness.light,
       colorScheme: ColorScheme.fromSwatch(primarySwatch: Colors.indigo),
       textTheme: const TextTheme(
-        // W nowszych wersjach Fluttera zastąpiono headline1/2/3/4/5/6
-        // przez displayLarge, displayMedium, headlineLarge itd.
         headlineMedium: TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
         bodyMedium: TextStyle(fontSize: 16),
       ),
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
-          backgroundColor: Colors.indigo,   // zamiast primary
-          foregroundColor: Colors.white,    // zamiast onPrimary
+          backgroundColor: Colors.indigo,
+          foregroundColor: Colors.white,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(8),
           ),

@@ -30,7 +30,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
       );
       Navigator.pop(context); // Powrót do ekranu logowania
     } catch (e) {
-      // Wyświetlamy błąd z AuthService (np. email-already-in-use)
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(e.toString())),
       );
@@ -40,26 +39,84 @@ class _RegisterScreenState extends State<RegisterScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      // Ustawiamy ciemne tło – tak, jak w login_screen
+      backgroundColor: Colors.grey[900],
       appBar: AppBar(
+        backgroundColor: Colors.grey[850],
         title: const Text('Rejestracja'),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
+      body: Center(
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
+          mainAxisSize: MainAxisSize.min,
           children: [
-            TextField(
-              controller: _emailController,
-              decoration: const InputDecoration(labelText: 'Email'),
+            // LOGO
+            Image.asset(
+              'assets/images/logo2.png',
+              width: 350,
+              height: 350,
+              fit: BoxFit.contain,
+            ),
+            const SizedBox(height: 24),
+
+            // Pole: Email
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16.0),
+              child: TextField(
+                controller: _emailController,
+                style: const TextStyle(color: Colors.white),
+                decoration: InputDecoration(
+                  labelText: 'Email',
+                  labelStyle: const TextStyle(color: Colors.yellow),
+                  filled: true,
+                  fillColor: Colors.grey[800],
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: const BorderSide(color: Colors.yellow),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: const BorderSide(color: Colors.yellowAccent),
+                  ),
+                ),
+              ),
             ),
             const SizedBox(height: 16),
-            TextField(
-              controller: _passwordController,
-              decoration: const InputDecoration(labelText: 'Hasło'),
-              obscureText: true,
+
+            // Pole: Hasło
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16.0),
+              child: TextField(
+                controller: _passwordController,
+                obscureText: true,
+                style: const TextStyle(color: Colors.white),
+                decoration: InputDecoration(
+                  labelText: 'Hasło',
+                  labelStyle: const TextStyle(color: Colors.yellow),
+                  filled: true,
+                  fillColor: Colors.grey[800],
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: const BorderSide(color: Colors.yellow),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: const BorderSide(color: Colors.yellowAccent),
+                  ),
+                ),
+              ),
             ),
             const SizedBox(height: 32),
+
+            // Przycisk rejestracji
             ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.yellow,
+                foregroundColor: Colors.black,
+                padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 32),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
               onPressed: _register,
               child: const Text('Zarejestruj się'),
             ),

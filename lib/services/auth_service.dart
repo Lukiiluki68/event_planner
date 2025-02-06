@@ -20,23 +20,21 @@ class AuthService {
 
   /// Logowanie przez Google
   static Future<UserCredential> signInWithGoogle() async {
-    // 1. Poproś użytkownika o wybranie konta Google
     final googleUser = await GoogleSignIn().signIn();
     if (googleUser == null) {
-      // Użytkownik anulował logowanie
       throw Exception('Logowanie przez Google przerwane');
     }
 
-    // 2. Pobierz token uwierzytelniający
+
     final googleAuth = await googleUser.authentication;
 
-    // 3. Utwórz credential do Firebase
+
     final credential = GoogleAuthProvider.credential(
       accessToken: googleAuth.accessToken,
       idToken: googleAuth.idToken,
     );
 
-    // 4. Zaloguj w Firebase
+
     return await _auth.signInWithCredential(credential);
   }
 

@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import '../services/event_service.dart';
 
 class EditEventScreen extends StatefulWidget {
-  final String docId;                // Zamiast int index
-  final Map<String, dynamic> event;  // Dane wydarzenia
+  final String docId;
+  final Map<String, dynamic> event;
 
-  EditEventScreen({
+  const EditEventScreen({
     Key? key,
     required this.docId,
     required this.event,
@@ -54,7 +54,7 @@ class _EditEventScreenState extends State<EditEventScreen> {
 
     try {
       await EventService.updateEvent(
-        widget.docId, // kluczowa zmiana – docId zamiast index
+        widget.docId,
         _titleController.text.trim(),
         _descriptionController.text.trim(),
         _locationController.text.trim(),
@@ -80,7 +80,6 @@ class _EditEventScreenState extends State<EditEventScreen> {
       firstDate: DateTime.now(),
       lastDate: DateTime(2100),
     );
-
     if (pickedDate != null) {
       setState(() {
         _selectedDate = pickedDate;
@@ -93,7 +92,6 @@ class _EditEventScreenState extends State<EditEventScreen> {
       context: context,
       initialTime: _selectedTime,
     );
-
     if (pickedTime != null) {
       setState(() {
         _selectedTime = pickedTime;
@@ -104,131 +102,171 @@ class _EditEventScreenState extends State<EditEventScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      // Ciemne tło
+      backgroundColor: Colors.grey[900],
       appBar: AppBar(
+        backgroundColor: Colors.grey[850],
         title: const Text('Edytuj Wydarzenie'),
       ),
-      body: SingleChildScrollView(
-        child: Container(
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              colors: [
-                Colors.indigo.shade50,
-                Colors.white,
-              ],
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
-            ),
-          ),
-          height: MediaQuery.of(context).size.height,
-          width: double.infinity,
-          child: Center(
-            child: Card(
-              margin: const EdgeInsets.symmetric(horizontal: 24, vertical: 48),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(16),
+      // Center + Column, spójny styl z resztą aplikacji
+      body: Center(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            // Nagłówek
+            const Text(
+              'Edytuj Wydarzenie',
+              style: TextStyle(
+                color: Colors.yellow,
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
               ),
-              elevation: 8,
-              child: Padding(
-                padding: const EdgeInsets.all(24.0),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    Text(
-                      'Edytuj Wydarzenie',
-                      style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                        color: Colors.indigo,
-                        fontWeight: FontWeight.bold,
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
-                    const SizedBox(height: 16),
-                    TextField(
-                      controller: _titleController,
-                      decoration: InputDecoration(
-                        labelText: 'Tytuł',
-                        prefixIcon: const Icon(Icons.title),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-                    TextField(
-                      controller: _descriptionController,
-                      decoration: InputDecoration(
-                        labelText: 'Opis',
-                        prefixIcon: const Icon(Icons.description),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-                    TextField(
-                      controller: _locationController,
-                      decoration: InputDecoration(
-                        labelText: 'Lokalizacja',
-                        prefixIcon: const Icon(Icons.location_on),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: Text(
-                            'Data: ${_selectedDate.toLocal()}'.split(' ')[0],
-                          ),
-                        ),
-                        ElevatedButton(
-                          onPressed: _pickDate,
-                          style: ElevatedButton.styleFrom(
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                          ),
-                          child: const Text('Zmień datę'),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 16),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: Text(
-                            'Czas: ${_selectedTime.format(context)}',
-                          ),
-                        ),
-                        ElevatedButton(
-                          onPressed: _pickTime,
-                          style: ElevatedButton.styleFrom(
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                          ),
-                          child: const Text('Zmień czas'),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 32),
-                    ElevatedButton(
-                      onPressed: _updateEvent,
-                      style: ElevatedButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(vertical: 16),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                      ),
-                      child: const Text('Zaktualizuj Wydarzenie'),
-                    ),
-                  ],
+            ),
+            const SizedBox(height: 16),
+
+            // Tytuł
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16.0),
+              child: TextField(
+                controller: _titleController,
+                style: const TextStyle(color: Colors.white),
+                decoration: InputDecoration(
+                  labelText: 'Tytuł',
+                  labelStyle: const TextStyle(color: Colors.yellow),
+                  prefixIcon: const Icon(Icons.title, color: Colors.yellow),
+                  filled: true,
+                  fillColor: Colors.grey[800],
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: const BorderSide(color: Colors.yellowAccent),
+                  ),
                 ),
               ),
             ),
-          ),
+            const SizedBox(height: 16),
+
+            // Opis
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16.0),
+              child: TextField(
+                controller: _descriptionController,
+                style: const TextStyle(color: Colors.white),
+                decoration: InputDecoration(
+                  labelText: 'Opis',
+                  labelStyle: const TextStyle(color: Colors.yellow),
+                  prefixIcon: const Icon(Icons.description, color: Colors.yellow),
+                  filled: true,
+                  fillColor: Colors.grey[800],
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: const BorderSide(color: Colors.yellowAccent),
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(height: 16),
+
+            // Lokalizacja
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16.0),
+              child: TextField(
+                controller: _locationController,
+                style: const TextStyle(color: Colors.white),
+                decoration: InputDecoration(
+                  labelText: 'Lokalizacja',
+                  labelStyle: const TextStyle(color: Colors.yellow),
+                  prefixIcon: const Icon(Icons.location_on, color: Colors.yellow),
+                  filled: true,
+                  fillColor: Colors.grey[800],
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: const BorderSide(color: Colors.yellowAccent),
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(height: 16),
+
+            // Zmiana daty
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16.0),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      'Data: ${_selectedDate.toLocal()}'.split(' ')[0],
+                      style: const TextStyle(color: Colors.white),
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.yellow,
+                      foregroundColor: Colors.black,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                    onPressed: _pickDate,
+                    child: const Text('Zmień datę'),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 16),
+
+            // Zmiana czasu
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16.0),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      'Czas: ${_selectedTime.format(context)}',
+                      style: const TextStyle(color: Colors.white),
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.yellow,
+                      foregroundColor: Colors.black,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                    onPressed: _pickTime,
+                    child: const Text('Zmień czas'),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 32),
+
+            // Przycisk aktualizacji wydarzenia
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.yellow,
+                foregroundColor: Colors.black,
+                padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 32),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
+              onPressed: _updateEvent,
+              child: const Text('Zaktualizuj Wydarzenie'),
+            ),
+            const SizedBox(height: 16),
+          ],
         ),
       ),
     );

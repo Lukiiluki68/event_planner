@@ -11,7 +11,6 @@ class EventService {
     // Konwersja dokumentów na listę map
     return querySnapshot.docs.map((doc) {
       final data = doc.data() as Map<String, dynamic>;
-      // Dodajemy docId do mapy, żeby łatwo móc aktualizować/usunąć wydarzenie
       data['docId'] = doc.id;
       return data;
     }).toList();
@@ -36,7 +35,6 @@ class EventService {
   }
 
   /// Aktualizacja istniejącego wydarzenia
-  /// Teraz przyjmujemy docId, zamiast 'int index'
   static Future<void> updateEvent(
       String docId,
       String title,
@@ -51,7 +49,6 @@ class EventService {
       'location': location,
       'dateTime': dateTime,
       'createdBy': createdBy,
-      // participants nie nadpisujemy, by zachować aktualną listę
     });
   }
 
